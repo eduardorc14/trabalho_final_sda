@@ -1,0 +1,5 @@
+# Cria o arquivo e adiciona a pasta do venv para ser ignorada
+echo ".venv/" > .gitignore
+
+# É uma boa prática adicionar também o cache do Python
+echo "__pycache__/" >> .gitignore
