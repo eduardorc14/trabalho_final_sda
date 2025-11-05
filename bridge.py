@@ -1,3 +1,5 @@
+# cria um client OPC UA e acessa o Coppelia Sim por API
+
 import time
 import math
 from opcua import Client
@@ -20,7 +22,7 @@ POS_TOL      = 1e-4         # tolerância para “parado”
 ############################
 def connect_opc(url=OPCUA_URL):
     client = Client(url)
-    client.connect()
+    client.connect()+65
     print("[OPC] Connected")
 
     root = client.get_objects_node()

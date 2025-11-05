@@ -6,3 +6,14 @@
 # operador dever´a, via supervis´orio, escolher pontos de referˆencia para inspe¸c˜ao visual do drone,
 # recebendo de volta os valores de posi¸c˜ao da robˆo e o timestamp associado. */
 
+clientTCP1 = client(tcp)
+
+manda para o serverTCP1     #clp.py
+recebe do serverTCP1        #clp.py
+
+## cria um sinotipo que terá o controle e o retorno.
+- Uma tela com os valores de X, Y, Z atualizados. Pode ser um gráfico de coordenadas X, Y, e outro gráfico apenas para o Z, que varia verticalmente (com timestamp).
+- Terá um campo que digita os novos valores de X, Y, Z. (Se não quiser no campo, pode colocar um grafico igual acima)
+- Tela com a câmera do drone se possível.
+
+criar um arquivo "historiador.txt" com todas essas posições recebidas.
