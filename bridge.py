@@ -22,7 +22,7 @@ POS_TOL      = 1e-4         # tolerância para “parado”
 ############################
 def connect_opc(url=OPCUA_URL):
     client = Client(url)
-    client.connect()+65
+    client.connect()
     print("[OPC] Connected")
 
     root = client.get_objects_node()
