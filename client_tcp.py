@@ -7,7 +7,7 @@ import threading
 import time
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.gridspec import GridSpec
+# from matplotlib.gridspec import GridSpec # Não precisamos mais disso
 
 # Configurações Globais
 
@@ -25,11 +25,9 @@ Z_LIM_MIN, Z_LIM_MAX = 0, 10.0
 
 # Variáveis Globais
 
-# Posição do Alvo (definida pela interface)
 posicao_target = {'x': 0.0, 'y': 0.0, 'z': 0.0}
 target_lock = threading.Lock() # bloqueio do target
 
-# Posição do Drone (recebida do CLP)
 posicao_drone = {'x': 5.0, 'y': 5.0, 'z': 5.0}
 drone_lock = threading.Lock() # bloqueio do drone
 
@@ -42,8 +40,11 @@ log_lock = threading.Lock() # bloqueio do arquivo de log
 root_window = None
 entry_target_x, entry_target_y, entry_target_z = None, None, None
 str_drone_x, str_drone_y, str_drone_z = None, None, None
+
 plot_target_xy, plot_drone_xy = None, None
-barra_target_z, barra_drone_z = None, None
+plot_target_z, plot_drone_z = None, None
+
+# (Removemos as 'barra_target_z' e 'barra_drone_z' pois não são mais barras)
 
 
 # Interface Functions
@@ -53,7 +54,7 @@ def start_gui():
     global entry_target_x, entry_target_y, entry_target_z
     global str_drone_x, str_drone_y, str_drone_z
     global plot_target_xy, plot_drone_xy
-    global barra_target_z, barra_drone_z
+    global plot_target_z, plot_drone_z 
 
     print("[GUI] Iniciando interface gráfica...")
     root_window = tk.Tk()
@@ -62,27 +63,34 @@ def start_gui():
     # Configurações estéticas
     widget_font = font.Font(family="Segoe UI", size=16)
     root_window.option_add("*Font", widget_font)
-    root_window.iconbitmap("drone.ico")
+    
+    # Tenta carregar o ícone (opcional)
+    try:
+        root_window.iconbitmap("drone.ico")
+    except tk.TclError:
+        print("[GUI] Aviso: 'drone.ico' não encontrado. Usando ícone padrão.")
 
-    # Configuração dos Gráficos Matplotlib 
-    fig = plt.Figure(figsize=(12, 5))
-    gs = GridSpec(1, 2, width_ratios=[3, 1], figure=fig)
-    ax_xy = fig.add_subplot(gs[0, 0])
-    ax_z = fig.add_subplot(gs[0, 1])
+
+    # Criação dos gráficos lado a lado
+    fig, (ax_xy, ax_z) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6), gridspec_kw={'width_ratios': [3, 1]})
 
     ax_xy.set_title("Controle dos eixos XY")
     ax_xy.set_xlim(XY_LIM_MIN, XY_LIM_MAX)
     ax_xy.set_ylim(XY_LIM_MIN, XY_LIM_MAX)
+    ax_xy.set_xlabel("Valor de X") # Adicionado
+    ax_xy.set_ylabel("Valor de Y") # Adicionado
     ax_xy.grid(True)
     ax_xy.axhline(0, color='black', linewidth=0.5)
     ax_xy.axvline(0, color='black', linewidth=0.5)
 
+    # Configura o Eixo Z como um gráfico 2D (Vertical)
     ax_z.set_title("Controle do eixo Z (Altura)")
-    ax_z.set_ylim(Z_LIM_MIN, Z_LIM_MAX)
+    ax_z.set_ylim(Z_LIM_MIN - 1, Z_LIM_MAX + 1) # Valor de Z agora no eixo Y
+    ax_z.set_xlim(0, 1) # Posição X fixa (vamos usar 0.5)
     ax_z.set_ylabel("Valor de Z")
+    # Remove os labels do eixo X, já que agora é uma linha só
     ax_z.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-    ax_z.grid(True, axis='y')
-    ax_z.axhline(0, color='black', linewidth=0.5)
+    ax_z.grid(True, axis='y') # Grid apenas no eixo do valor (Y)
 
     # Criar os Plots
     with target_lock:
@@ -90,18 +98,16 @@ def start_gui():
     with drone_lock:
         d_pos = posicao_drone.copy()
 
-    plot_target_xy, = ax_xy.plot([t_pos['x']], [t_pos['y']], marker='.', color=COR_TARGET, label='Target', linestyle='none')
-    plot_drone_xy, = ax_xy.plot([d_pos['x']], [d_pos['y']], marker='X', color=COR_DRONE, label='Drone', markersize=10, linestyle='none')
+    # Plots do Eixo XY (com zorder)
+    plot_target_xy, = ax_xy.plot([t_pos['x']], [t_pos['y']], marker='.', color=COR_TARGET, label='Target', markersize=10, linestyle='none', zorder=10)
+    plot_drone_xy, = ax_xy.plot([d_pos['x']], [d_pos['y']], marker='X', color=COR_DRONE, label='Drone', markersize=10, linestyle='none', zorder=5)
     ax_xy.legend()
 
-    bar_container = ax_z.bar([0.4, 0.6], [t_pos['z'], d_pos['z']], color=[COR_TARGET, COR_DRONE], width=0.15)
-    barra_target_z = bar_container[0]
-    barra_drone_z = bar_container[1]
-    
-    # Define labels para as barras e cria a legenda
-    barra_target_z.set_label('Target')
-    barra_drone_z.set_label('Drone')
-    ax_z.legend()
+    # Cria os plots para o Eixo Z (Vertical, com zorder)
+    # O 'x' é fixo (0.5), o 'y' é o valor de Z
+    plot_target_z, = ax_z.plot([0.5], [t_pos['z']], marker='.', color=COR_TARGET, label='Target', markersize=10, linestyle='none', zorder=10)
+    plot_drone_z, = ax_z.plot([0.5], [d_pos['z']], marker='X', color=COR_DRONE, label='Drone', markersize=10, linestyle='none', zorder=5)
+    ax_z.legend() # Adicionado legenda no Z
     
     fig.tight_layout(pad=1.0)
 
@@ -148,7 +154,7 @@ def start_gui():
 
     # Animação e Loop 
     canvas.mpl_connect('button_press_event', ao_clicar)
-    ani = animation.FuncAnimation(fig, update_animation_frame, interval=100, blit=True)
+    ani = animation.FuncAnimation(fig, update_animation_frame, interval=100, blit=False)
     update_target_entries() # Coloca valores iniciais
     
     root_window.protocol("WM_DELETE_WINDOW", on_gui_closing) # Identifica fechamento da janela
@@ -195,16 +201,18 @@ def apply_target_from_entries():
         print("[GUI] Erro: Entrada de texto inválida. Use apenas números.")
         update_target_entries() # Restaura o valor antigo
 
+# Chamada quando o gráfico Matplotlib é clicado
 def ao_clicar(event):
-    """Chamada quando o gráfico Matplotlib é clicado."""
     new_pos = {}
     if event.inaxes == event.canvas.figure.axes[0]: # Se foi no gráfico XY
         x, y = event.xdata, event.ydata
         if x is None or y is None: return 
         new_pos['x'] = max(XY_LIM_MIN, min(XY_LIM_MAX, x))
         new_pos['y'] = max(XY_LIM_MIN, min(XY_LIM_MAX, y))
+        
     elif event.inaxes == event.canvas.figure.axes[1]: # Se foi no gráfico Z
-        z = event.ydata
+        # Pega o Y (valor de Z) e ignora o X (que é só 0.5)
+        z = event.ydata 
         if z is None: return 
         new_pos['z'] = max(Z_LIM_MIN, min(Z_LIM_MAX, z))
     else:
@@ -223,9 +231,14 @@ def update_animation_frame(frame):
     with drone_lock:
         d_pos = posicao_drone.copy()
 
-    # Atualiza os plots do 'drone'
+    # ATUALIZA O GRÁFICO XY
     plot_drone_xy.set_data([d_pos['x']], [d_pos['y']])
-    barra_drone_z.set_height(d_pos['z'])
+    plot_target_xy.set_data([t_pos['x']], [t_pos['y']])
+
+    # ATUALIZA O GRÁFICO Z
+    # O 'x' é fixo (0.5), só o 'y' (valor de Z) muda
+    plot_drone_z.set_data([0.5], [d_pos['z']])
+    plot_target_z.set_data([0.5], [t_pos['z']])
 
     # Atualiza os labels de texto do 'drone'
     if str_drone_x: # Verifica se os widgets já foram criados
@@ -233,12 +246,7 @@ def update_animation_frame(frame):
         str_drone_y.set(f"{d_pos['y']:.2f}")
         str_drone_z.set(f"{d_pos['z']:.2f}")
     
-    # Atualiza os plots do 'target'
-    plot_target_xy.set_data([t_pos['x']], [t_pos['y']])
-    barra_target_z.set_height(t_pos['z'])
-    
-    # Retorna os objetos atualizados
-    return plot_drone_xy, barra_drone_z, plot_target_xy, barra_target_z
+    return [] # Necessário para animação sem blit
 
 # TCP Functions
 # recebe dados do CLP, atualiza 'posicao_drone' e escreve no log
