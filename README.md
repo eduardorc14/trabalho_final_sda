@@ -47,7 +47,7 @@ Você pode rodar cada código manualmente. É preciso abrir um terminal separado
 
 Após a execução escolhida, a interface gráfica "Sinótico Drone" será aberta.
 
-<img width="1196" height="623" alt="image" src="https://github.com/user-attachments/assets/c4b81ca6-c037-4a79-92a5-08e27dbd7aa1" />
+<img width="1193" height="719" alt="image" src="https://github.com/user-attachments/assets/be9e5d57-7312-43a0-b66e-34b6cbc9b25c" />
 
 Você pode controlar o drone de duas formas:
 
