@@ -1,71 +1,53 @@
 # Simulação e Controle de Drone
 
-## Bibliotecas demandadas
+Este projeto demonstra um sistema de controle de um drone simulado, integrando o CoppeliaSim, servidores e OPC UA e TCP/IP e um sinótico para controle.
+
+## 1. Requisitos
+
+Instale as bibliotecas Python necessárias:
+```
 pip install coppeliasim-zmqremoteapi-client
 pip install opcua
 pip install matplotlib
+```
 
-Para rodar o código, você deve rodar os seguintes códigos na seguinte ordem:
+## 2. Configuração do Ambiente
 
-você deve abrir o Prosys OPC UA Simulation Server e abrir o arquivo "drone.uasim". Depois abra o Coppelia Sim e abra o arquivo "drone.ttt", depois basta seguir a ordem de compilaçãop dos códigos a seguir
+Além do Python instalado no computador, é necessário mais dois softwares, o Prosys OPC UA Simulation Server e o CoppeliaSim.
 
-1 - bridge.py
-2 - clp.py
-3 - client_tcp.py
-4 - mes.py
-5 - client_mes.py
+Abra o Prosys OPC UA Simulation Server e carregue o arquivo de simulação de server ```drone.uasim```.
 
-Ou pode apenas rodar o script "run.py" que rodará todos na ordem já correta.
+Abra o CoppeliaSim e carregue o arquivo de cena ```drone.ttt```.
 
-Simulação e Controle de Drone
-
-Este projeto demonstra um sistema de controle de um drone simulado, integrando o CoppeliaSim, um servidor OPC UA e uma interface gráfica de controle em Python.
-
-1. Requisitos
-
-Antes de começar, instale as bibliotecas Python necessárias:
-
-pip install coppeliasim-zmqremoteapi-client
-pip install opcua
-pip install matplotlib
-
-
-2. Configuração do Ambiente
-
-Você precisará de dois softwares de simulação. Siga estes passos:
-
-Abra o Prosys OPC UA Simulation Server e carregue o arquivo de simulação drone.uasim.
-
-Abra o CoppeliaSim e carregue a cena drone.ttt.
-
-3. Execução do Projeto
+## 3. Execução do Projeto
 
 Com os simuladores prontos, você pode iniciar os scripts de controle.
 
-Método Recomendado (Automático)
+### Método Automático
 
-Você pode executar o script run.py, que irá iniciar todos os componentes na ordem correta:
-
+Você pode executar o script run.py, que irá iniciar todos os códigos na ordem correta:
+```
 python run.py
+```
 
+### Método Manual 
 
-Método Manual (Para Debug)
+Você pode rodar cada código manualmente. É preciso abrir um terminal separado para cada script e executá-los na seguinte ordem:
+```python bridge.py```
 
-Se preferir, você pode rodar cada componente manualmente. É crucial abrir um terminal separado para cada script e executá-los na seguinte ordem:
+```python clp.py```
 
-python bridge.py
+```python client_tcp.py```
 
-python clp.py
+```python mes.py```
 
-python client_tcp.py (Este é o script da interface gráfica)
+```python client_mes.py```
 
-python mes.py
+## 4. Como Usar a Interface
 
-python client_mes.py
+Após a execução escolhida, a interface gráfica "Sinótico Drone" será aberta.
 
-4. Como Usar a Interface
-
-Após a execução (manual ou automática), a interface gráfica "Sinótico Drone" será aberta.
+<img width="1196" height="623" alt="image" src="https://github.com/user-attachments/assets/c4b81ca6-c037-4a79-92a5-08e27dbd7aa1" />
 
 Você pode controlar o drone de duas formas:
 
@@ -73,4 +55,4 @@ Clique no Gráfico: Clique diretamente em qualquer ponto nos gráficos "Controle
 
 Entrada Manual: Digite as coordenadas X, Y e Z desejadas nos campos da caixa "Definir Target" e clique no botão "Aplicar".
 
-O drone (marcador X azul) se moverá automaticamente em direção ao alvo (marcador . vermelho) no gráfico.
+O drone se moverá automaticamente em direção ao target marcado no gráfico.
