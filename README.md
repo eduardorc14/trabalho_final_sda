@@ -2,7 +2,11 @@
 
 Este projeto demonstra um sistema de controle de um drone simulado, integrando o CoppeliaSim, servidores e OPC UA e TCP/IP e um sinótico para controle.
 
-## 1. Requisitos
+## 1. Link do Vídeo apresentando o projeto
+
+https://www.youtube.com/watch?v=NboQ0eCnko8
+
+## 2. Requisitos
 
 Instale as bibliotecas Python necessárias:
 ```
@@ -11,7 +15,7 @@ pip install opcua
 pip install matplotlib
 ```
 
-## 2. Configuração do Ambiente
+## 3. Configuração do Ambiente
 
 Além do Python instalado no computador, é necessário mais dois softwares, o Prosys OPC UA Simulation Server e o CoppeliaSim.
 
@@ -19,7 +23,7 @@ Abra o Prosys OPC UA Simulation Server e carregue o arquivo de simulação de se
 
 Abra o CoppeliaSim e carregue o arquivo de cena ```drone.ttt```.
 
-## 3. Execução do Projeto
+## 4. Execução do Projeto
 
 Com os simuladores prontos, você pode iniciar os scripts de controle.
 
@@ -43,7 +47,7 @@ Você pode rodar cada código manualmente. É preciso abrir um terminal separado
 
 ```python client_mes.py```
 
-## 4. Como Usar a Interface
+## 5. Como Usar a Interface
 
 Após a execução escolhida, a interface gráfica "Sinótico Drone" será aberta.
 
